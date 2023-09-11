@@ -41,11 +41,12 @@ float vertices[21] = {
 
 unsigned int createVAO(float* vertexData, int numVertices)
 {
+	int stride = 7;
 	unsigned int vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	//Allocate space for + send vertex data to GPU.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 7 * numVertices, vertexData, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * stride * numVertices, vertexData, GL_STATIC_DRAW);
 
 	unsigned int vao;
 	glGenVertexArrays(1, &vao);
@@ -54,11 +55,11 @@ unsigned int createVAO(float* vertexData, int numVertices)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	//Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (const void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * stride, (const void*)0);
 	glEnableVertexAttribArray(0);
 
 	//Color attribute
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 7, (const void*)(sizeof(float)*3));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * stride, (const void*)(sizeof(float)*3));
 	glEnableVertexAttribArray(1);
 
 	return vao;
@@ -67,23 +68,23 @@ unsigned int createVAO(float* vertexData, int numVertices)
 unsigned int createShader(GLenum shaderType, const char* sourceCode)
 {
 	//Create a new vertex shader object
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned int shader = glCreateShader(shaderType);
 	//Supply the shader object with source code
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glShaderSource(shader, 1, &sourceCode, NULL);
 	//Compile the shader object
-	glCompileShader(vertexShader);
+	glCompileShader(shader);
 
 	int success;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		//512 is an arbitrary length, but should be plenty of characters for our error message.
 		char infoLog[512];
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
 		printf("Failed to compile shader: %s", infoLog);
 		return 0;
 	}
 	else
-		return vertexShader;
+		return shader;
 }
 
 unsigned int createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
