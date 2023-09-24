@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <meh/shader.h>
 
 #include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
@@ -8,19 +9,18 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-unsigned int createShader(GLenum shaderType, const char* sourceCode);
-unsigned int createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 unsigned int createVAO(float* vertexData, int numVertices);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
-float vertices[9] = {
-	//x   //y  //z   
-	-0.5, -0.5, 0.0, 
-	 0.5, -0.5, 0.0,
-	 0.0,  0.5, 0.0 
+float vertices[18] = {
+	//x    y    z
+	//Triangle 1 
+	-0.5 , 1 , -1 ,
+	//Triangle 2
+	0.5 , -1 , 1
 };
 
 float triangleColor[3] = { 1.0f, 0.5f, 0.0f };
@@ -53,10 +53,8 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
-	unsigned int shader = createShaderProgram(vertexShaderSource, fragmentShaderSource);
 	unsigned int vao = createVAO(vertices, 3);
 
-	glUseProgram(shader);
 	glBindVertexArray(vao);
 
 	while (!glfwWindowShouldClose(window)) {
@@ -65,9 +63,17 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//Set uniforms
-		glUniform3f(glGetUniformLocation(shader, "_Color"), triangleColor[0], triangleColor[1], triangleColor[2]);
-		glUniform1f(glGetUniformLocation(shader,"_Brightness"), triangleBrightness);
+		yourLib::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+		shader.use();
+		shader.setFloat("_MyFloat", triangleBrightness);
+		//shader.setVec2("_MyVec2", vec2[0],vec2[1]);
+		shader.setVec3("_MyVec3", triangleColor[0],triangleColor[1], triangleColor[2]);
+		//shader.setVec4("_MyVec4", vec4[0], vec4[1], vec4[2], vec4[3]);
 
+		//Wireframe
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//Shaded
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		//Render UI
@@ -95,46 +101,9 @@ int main() {
 }
 
 
-unsigned int createShader(GLenum shaderType, const char* sourceCode) {
-	//Create a new vertex shader object
-	unsigned int shader = glCreateShader(shaderType);
-	//Supply the shader object with source code
-	glShaderSource(shader, 1, &sourceCode, NULL);
-	//Compile the shader object
-	glCompileShader(shader);
-	int success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		//512 is an arbitrary length, but should be plenty of characters for our error message.
-		char infoLog[512];
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		printf("Failed to compile shader: %s", infoLog);
-	}
-	return shader;
-}
+unsigned int createShader(GLenum shaderType, const char* sourceCode);
 
-unsigned int createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource) {
-	unsigned int vertexShader = createShader(GL_VERTEX_SHADER, vertexShaderSource);
-	unsigned int fragmentShader = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-
-	unsigned int shaderProgram = glCreateProgram();
-	//Attach each stage
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	//Link all the stages together
-	glLinkProgram(shaderProgram);
-	int success;
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("Failed to link shader program: %s", infoLog);
-	}
-	//The linked program now contains our compiled code, so we can delete these intermediate objects
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-	return shaderProgram;
-}
+unsigned int createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 
 unsigned int createVAO(float* vertexData, int numVertices) {
 	unsigned int vao;
