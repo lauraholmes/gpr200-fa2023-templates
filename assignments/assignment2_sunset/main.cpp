@@ -9,19 +9,27 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-unsigned int createVAO(float* vertexData, int numVertices);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 const int SCREEN_WIDTH = 1080;
 const int SCREEN_HEIGHT = 720;
 
-float vertices[18] = {
-	//x    y    z
-	//Triangle 1 
-	-0.5 , 1 , -1 ,
-	//Triangle 2
-	0.5 , -1 , 1
+struct Vertex {
+	float x, y, z;
+	float u, v;
 };
+Vertex vertices[4] = {
+	//x    y    z    u    v
+   {-0.5f ,-0.5f , 0.0f ,-0.5f ,-0.5f }, //Bottom left
+   { 0.0f ,-0.5f , 0.0f , 0.0f ,-0.5f }, //Bottom right
+   { 0.5f , 0.5f , 0.0f , 0.5f , 0.5f },  //Top right
+   {-0.5f , 0.5f , 0.0f , 0.5f , 0.5f }  //Top left
+};
+unsigned int indices[6] = {
+	0 , 1 , 3 , //Triangle 1
+	1 , 2 , 3  //Triangle 2
+};
+unsigned int createVAO(Vertex* vertexData, int numVertices, unsigned int* indicesData, int numIndices);
 
 float triangleColor[3] = { 1.0f, 0.5f, 0.0f };
 float triangleBrightness = 1.0f;
@@ -47,34 +55,30 @@ int main() {
 		return 1;
 	}
 
+	yourLib::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
+
 	//Initialize ImGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
-	unsigned int vao = createVAO(vertices, 3);
+	unsigned int vao = createVAO(vertices, 4, indices, 6);
 
+	shader.use();
 	glBindVertexArray(vao);
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
 		//Set uniforms
-		yourLib::Shader shader("assets/vertexShader.vert", "assets/fragmentShader.frag");
-		shader.use();
-		shader.setFloat("_MyFloat", triangleBrightness);
-		//shader.setVec2("_MyVec2", vec2[0],vec2[1]);
-		shader.setVec3("_MyVec3", triangleColor[0],triangleColor[1], triangleColor[2]);
-		//shader.setVec4("_MyVec4", vec4[0], vec4[1], vec4[2], vec4[3]);
 
-		//Wireframe
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//Shaded
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		shader.setVec3("_Color", triangleColor[0], triangleColor[1], triangleColor[2]);
+		shader.setFloat("_MyFloat", triangleBrightness);
+		float time = (float)glfwGetTime();
+		shader.setFloat("_Time", time);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
 		//Render UI
 		{
@@ -105,24 +109,23 @@ unsigned int createShader(GLenum shaderType, const char* sourceCode);
 
 unsigned int createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 
-unsigned int createVAO(float* vertexData, int numVertices) {
+unsigned int createVAO(Vertex* vertexData, int numVertices, unsigned int* indicesData, int numIndices) {
 	unsigned int vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	//Define a new buffer id
-	unsigned int vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//Allocate space for + send vertex data to GPU.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numVertices * 3, vertexData, GL_STATIC_DRAW);
-
-	//Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (const void*)0);
+	unsigned int ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * numIndices, indicesData, GL_STATIC_DRAW);
+	//Position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, x));
 	glEnableVertexAttribArray(0);
-
+	//UV
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)(offsetof(Vertex, u)));
+	glEnableVertexAttribArray(1);
 	return vao;
-}
+};
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
