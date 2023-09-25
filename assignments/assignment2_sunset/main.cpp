@@ -66,7 +66,6 @@ int main() {
 	unsigned int vao = createVAO(vertices, 4, indices, 6);
 
 	shader.use();
-	glBindVertexArray(vao);
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -75,10 +74,11 @@ int main() {
 		//Set uniforms
 
 		shader.setVec3("_Color", triangleColor[0], triangleColor[1], triangleColor[2]);
-		shader.setFloat("_MyFloat", triangleBrightness);
+		shader.setFloat("_Brightness", triangleBrightness);
+		shader.setVec2("UV", triangleColor[0], triangleColor[2]);
+		//shader.setVec3("iResolution", , , );
 		float time = (float)glfwGetTime();
 		shader.setFloat("_Time", time);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
 		//Render UI
 		{
