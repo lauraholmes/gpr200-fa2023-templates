@@ -4,17 +4,6 @@
 #include "../ew/ewMath/ewMath.h"
 
 namespace myLib {
-	struct Transform {
-		ew::Vec3 position = ew::Vec3(0.0f, 0.0f, 0.0f);
-		ew::Vec3 rotation = ew::Vec3(0.0f, 0.0f, 0.0f); //Euler angles (degrees)
-		ew::Vec3 scale = ew::Vec3(1.0f, 1.0f, 1.0f);
-		ew::Mat4 getModelMatrix() const {
-			float x = ew::Radians(rotation.x);
-			float y = ew::Radians(rotation.y);
-			float z = ew::Radians(rotation.z);
-			return Translate(position) * RotateY(y) * RotateX(x) * RotateZ(z) * Scale(scale);
-		}
-	};
 	//Identity matrix
 	inline ew::Mat4 Identity() {
 		return ew::Mat4(
@@ -69,5 +58,15 @@ namespace myLib {
 			0, 0, 0, 1
 		);
 	};
-
+	struct Transform {
+		ew::Vec3 position = ew::Vec3(0.0f, 0.0f, 0.0f);
+		ew::Vec3 rotation = ew::Vec3(0.0f, 0.0f, 0.0f); //Euler angles (degrees)
+		ew::Vec3 scale = ew::Vec3(1.0f, 1.0f, 1.0f);
+		ew::Mat4 getModelMatrix() const {
+			float x = ew::Radians(rotation.x);
+			float y = ew::Radians(rotation.y);
+			float z = ew::Radians(rotation.z);
+			return Translate(position) * RotateY(y) * RotateX(x) * RotateZ(z) * Scale(scale);
+		}
+	};
 }
