@@ -58,6 +58,16 @@ namespace myLib {
 			0, 0, 0, 1
 		);
 	};
+	inline ew::Mat4 LookAt(ew::Vec3 eye, ew::Vec3 target, ew::Vec3 up){
+	//use ew::Cross for cross product	
+		ew::Cross(eye, target);
+	};
+
+	inline ew::Mat 4 Orthographic(float height, float aspect, float near, float far){
+	
+	
+	};	
+
 	struct Transform {
 		ew::Vec3 position = ew::Vec3(0.0f, 0.0f, 0.0f);
 		ew::Vec3 rotation = ew::Vec3(0.0f, 0.0f, 0.0f); //Euler angles (degrees)
@@ -69,4 +79,6 @@ namespace myLib {
 			return Translate(position) * RotateY(y) * RotateX(x) * RotateZ(z) * Scale(scale);
 		}
 	};
+
+
 }
