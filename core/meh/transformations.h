@@ -15,7 +15,7 @@ namespace myLib {
 	};
 	//Scale on x,y,z axes
 	inline ew::Mat4 Scale(ew::Vec3 s) {
-		ew::Mat4(
+		return ew::Mat4(
 			s.x, 0, 0, 0,
 			0, s.y, 0, 0,
 			0, 0, s.z, 0,
@@ -24,7 +24,7 @@ namespace myLib {
 	};
 	//Rotation around X axis (pitch) in radians
 	inline ew::Mat4 RotateX(float rad) {
-		ew::Mat4(
+		return ew::Mat4(
 			1, 0, 0, 0,
 			0, cos(rad), -sin(rad), 0,
 			0, sin(rad), cos(rad), 0,
@@ -33,7 +33,7 @@ namespace myLib {
 	};
 	//Rotation around Y axis (yaw) in radians
 	inline ew::Mat4 RotateY(float rad) {
-		ew::Mat4(
+		return ew::Mat4(
 			cos(rad), 0, sin(rad), 0,
 			0, 1, 0, 0,
 			-sin(rad), 0, cos(rad), 0,
@@ -42,7 +42,7 @@ namespace myLib {
 	};
 	//Rotation around Z axis (roll) in radians
 	inline ew::Mat4 RotateZ(float rad) {
-		ew::Mat4(
+		return ew::Mat4(
 			cos(rad), -sin(rad), 0, 0,
 			sin(rad), cos(rad), 0, 0,
 			0, 0, 1, 0,
@@ -51,22 +51,55 @@ namespace myLib {
 	};
 	//Translate x,y,z
 	inline ew::Mat4 Translate(ew::Vec3 t) {
-		ew::Mat4(
+		return ew::Mat4(
 			1, 0, 0, t.x,
 			0, 1, 0, t.y,
 			0, 0, 1, t.z,
 			0, 0, 0, 1
 		);
-	};
+	};	
 	inline ew::Mat4 LookAt(ew::Vec3 eye, ew::Vec3 target, ew::Vec3 up){
 	//use ew::Cross for cross product	
-		ew::Cross(eye, target);
+		ew::Vec3 camDirection = ew::Normalize(eye - target);
+		ew::Vec3 right = ew::Normalize(ew::Cross(up, camDirection));
+		ew::Vec3 camUp = ew::Cross(camDirection, right);
+
+		ew::Mat4 m1;
+		m1 = (
+		right.x, right.y, right.z, 0,
+		camUp.x, camUp.y, camUp.z, 0,
+		camDirection.x, camDirection.y, camDirection.z, 0,
+		0, 0, 0, 1
+		);
+		ew::Mat4 m2;
+		m2 = (
+		1, 0, 0, -eye.x,
+		0, 1, 0, -eye.y,
+		0, 0, 1, -eye.z,
+		0, 0, 0, 1
+		);
+		return m1 * m2;
 	};
 
-	inline ew::Mat 4 Orthographic(float height, float aspect, float near, float far){
+	inline ew::Mat4 Orthographic(float height, float aspect, float near, float far){
+		return ew::Mat4(
+			1 / aspect, 0, 0, 0,
+			0, 1 / height, 0, 0,
+			0, 0, -2/(far - near), -(far+near)/(far-near),
+			0, 0, 0, 1
+		);
 	
-	
-	};	
+	};
+	inline ew::Mat4 Perspective(float fov, float aspect, float near, float far) {
+		return ew::Mat4(
+	    1 / tan(fov/2)*aspect, 0, 0, 0,
+		0, 1 / tan(fov/2), 0, 0,
+		0, 0, -(far+near)/(near-far), (2*far*near)/(near-far),
+		0, 0, -1, 0
+		);
+	};
+
+
 
 	struct Transform {
 		ew::Vec3 position = ew::Vec3(0.0f, 0.0f, 0.0f);
@@ -80,5 +113,24 @@ namespace myLib {
 		}
 	};
 
-
+	struct Camera {
+		ew::Vec3 position; //Camera body position
+		ew::Vec3 target; //Position to look at
+		float fov; //Vertical field of view in degrees
+		float aspectRatio; //Screen width / Screen height
+		float nearPlane; //Near plane distance (+Z)
+		float farPlane; //Far plane distance (+Z)
+		bool orthographic; //Perspective or orthographic?
+		float orthoSize; //Height of orthographic frustum
+		ew::Mat4 ViewMatrix() {
+			return LookAt(position, target, ew::Vec3(0.0, 1.0, 0.0));
+		}; //World->View
+		ew::Mat4 ProjectionMatrix() {
+			if (orthographic == false) {
+				return Perspective(fov, aspectRatio, nearPlane, farPlane);
+			}
+			else
+				return Orthographic(orthoSize, aspectRatio, nearPlane, farPlane);
+		}; //View->Clip
+	};
 }

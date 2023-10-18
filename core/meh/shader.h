@@ -2,6 +2,8 @@
 #pragma once
 #include <sstream>
 #include <fstream>
+#include "../ew/external/glad.h"
+#include "../ew/ewMath/mat4.h"
 namespace yourLib {
 	std::string loadShaderSourceFromFile(const std::string& filePath);
 
