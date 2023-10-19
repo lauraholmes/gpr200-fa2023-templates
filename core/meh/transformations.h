@@ -99,8 +99,6 @@ namespace myLib {
 		);
 	};
 
-
-
 	struct Transform {
 		ew::Vec3 position = ew::Vec3(0.0f, 0.0f, 0.0f);
 		ew::Vec3 rotation = ew::Vec3(0.0f, 0.0f, 0.0f); //Euler angles (degrees)
