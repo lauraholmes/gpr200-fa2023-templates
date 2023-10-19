@@ -11,6 +11,7 @@
 #include <ew/shader.h>
 #include <ew/procGen.h>
 #include <meh/transformations.h>
+#include <meh/camera.h>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
