@@ -68,14 +68,6 @@ int main() {
 		cubeTransforms[i].position.y = i / (NUM_CUBES / 2) - 0.5;
 	}
 
-	camera.position = ew::Vec3(0, 0, 5);
-	camera.target = ew::Vec3(0, 0, 0);
-	camera.fov = 60;
-	camera.orthoSize = 6;
-	camera.nearPlane = 0.1;
-	camera.farPlane = 100;
-	camera.orthographic = true;
-
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
@@ -116,9 +108,9 @@ int main() {
 			ImGui::DragFloat3("Position", &camera.position.x, 5.0f);
 			ImGui::DragFloat3("Target", &camera.target.x, 0.0f);
 			ImGui::Checkbox("Orthographic", &camera.orthographic);
-			ImGui::DragFloat("FOV", &camera.fov, 60);
-			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1);
-			ImGui::DragFloat("Far Plane", &camera.farPlane, 100);
+			ImGui::DragFloat("FOV", &camera.fov, 60.0f);
+			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1f);
+			ImGui::DragFloat("Far Plane", &camera.farPlane, 100.0f);
 			ImGui::End();
 			
 			ImGui::Render();
