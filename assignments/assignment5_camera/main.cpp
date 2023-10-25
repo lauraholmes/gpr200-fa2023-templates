@@ -69,7 +69,7 @@ int main() {
 		cubeTransforms[i].position.y = i / (NUM_CUBES / 2) - 0.5;
 	}
 
-	float prevTime; //Timestamp of previous frame
+	float prevTime{}; //Timestamp of previous frame
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
@@ -118,12 +118,12 @@ int main() {
 			ImGui::DragFloat3("Position", &camera.position.x, 5.0f);
 			ImGui::DragFloat3("Target", &camera.target.x, 0.0f);
 			ImGui::Checkbox("Orthographic", &camera.orthographic);
-			ImGui::SliderFloat("FOV", &camera.fov, 0, 180, "%f", 0);
+			ImGui::SliderFloat("FOV", &camera.fov, 0.0f, 180.0f);
 			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1f);
 			ImGui::DragFloat("Far Plane", &camera.farPlane, 100.0f);
 			ImGui::Text("Camera Controller");
-			ImGui::Value("Yaw", &cameraControls.yaw);
-			ImGui::Value("Pitch", &cameraControls.pitch);
+			ImGui::Text("Yaw: %f", &cameraControls.yaw, 0.0f);
+			ImGui::Text("Pitch: %f", &cameraControls.pitch, 0.0f);
 			ImGui::DragFloat("Move Speed", &cameraControls.moveSpeed, 5.0f);
 			ImGui::Button("Reset");
 			if (ImGui::Button("Reset")) {
