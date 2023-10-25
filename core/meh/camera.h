@@ -115,10 +115,6 @@ namespace myLib {
 
 			//Setting camera.target should be done after changing position. Otherwise, it will use camera.position from the previous frame and lag behind
 			camera->target = camera->position + forward;
-
-
-
-
 		};
 	
 	};

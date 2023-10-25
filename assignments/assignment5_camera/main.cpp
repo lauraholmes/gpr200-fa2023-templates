@@ -127,7 +127,15 @@ int main() {
 			ImGui::DragFloat("Move Speed", &cameraControls.moveSpeed, 5.0f);
 			ImGui::Button("Reset");
 			if (ImGui::Button("Reset")) {
-				
+				camera.position = ew::Vec3(0.0f, 0.0f, 5.0f);
+				camera.target = ew::Vec3(0.0f, 0.0f, 0.0f);
+				camera.fov = 60.0f;
+				camera.nearPlane = 0.1f;
+				camera.farPlane = 100.0f;
+				camera.orthoSize = 6.0f;
+				cameraControls.yaw = 0;
+				cameraControls.pitch = 0;
+				cameraControls.moveSpeed = 5.0f;
 			}
 			ImGui::End();
 			
