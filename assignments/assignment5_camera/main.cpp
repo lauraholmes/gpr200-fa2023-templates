@@ -113,6 +113,8 @@ int main() {
 			ImGui::DragFloat("FOV", &camera.fov, 60.0f);
 			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1f);
 			ImGui::DragFloat("Far Plane", &camera.farPlane, 100.0f);
+			ImGui::Text("Camera Controller");
+			ImGui::
 			ImGui::End();
 			
 			ImGui::Render();

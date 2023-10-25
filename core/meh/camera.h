@@ -58,14 +58,14 @@ namespace myLib {
 			}
 
 			//TODO: Get mouse position delta for this frame
-			float xOffSet = mouseX - prevMouseX;
-			float yOffSet = prevMouseY - mouseY;
-			xOffSet *= mouseSensitivity;
-			yOffSet *= mouseSensitivity;
+			float xOffSet = mouseX - controls->prevMouseX;
+			float yOffSet = mouseY - controls->prevMouseY;
+			xOffSet *= controls->mouseSensitivity;
+			yOffSet *= controls->mouseSensitivity;
 			
 			//TODO: Add to yaw and pitch
-			yaw += xOffSet;
-			pitch += yOffSet;
+			controls->yaw += xOffSet;
+			controls->pitch += yOffSet;
 			
 			//TODO: Clamp pitch between -89 and 89 degrees
 
@@ -78,11 +78,31 @@ namespace myLib {
 			controls->prevMouseX = mouseX;
 			controls->prevMouseY = mouseY;
 			//Construct forward vector using yaw and pitch. Don't forget to convert to radians!
-			float rYaw = ew::Radians(yaw);
-			float rPitch = ew::Radians(pitch);
+			float rYaw = ew::Radians(controls->yaw);
+			float rPitch = ew::Radians(controls->pitch);
 			ew::Vec3 forward = ew::Vec3(cos(rYaw)*cos(rPitch), sin(rPitch), sin(rYaw)*cos(rPitch));
 			//By setting target to a point in front of the camera along its forward direction, our LookAt will be updated accordingly when rendering.
 			camera->target = camera->position + forward;
+			//TODO: Using camera forward and world up (0,1,0), construct camera right and up vectors. Graham-schmidt process!
+			ew::Vec3 worldUp = ew::Vec3(0.0f, 1.0f, 0.0f);
+
+
+
+			ew::Vec3 right = ew::Vec3( , , );
+			ew::Vec3 up = ew::Vec3( , ,) ;
+				//TODO: Keyboard controls for moving along forward, back, right, left, up, and down. See Requirements for key mappings.
+				//EXAMPLE: Moving along forward axis if W is held.
+				//Note that this is framerate dependent, and will be very fast until you scale by deltaTime. See the next section.
+			if (glfwGetKey(window, GLFW_KEY_W)) {
+				camera->position += forward * controls->moveSpeed;
+			}
+
+			//Setting camera.target should be done after changing position. Otherwise, it will use camera.position from the previous frame and lag behind
+			camera->target = camera->position + forward;
+
+
+
+
 		};
 	
 	};
