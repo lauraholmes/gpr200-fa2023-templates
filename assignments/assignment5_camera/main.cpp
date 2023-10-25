@@ -74,6 +74,7 @@ int main() {
 	camera.orthoSize = 6;
 	camera.nearPlane = 0.1;
 	camera.farPlane = 100;
+	camera.orthographic = true;
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -112,7 +113,12 @@ int main() {
 				ImGui::PopID();
 			}
 			ImGui::Text("Camera");
-
+			ImGui::DragFloat3("Position", &camera.position.x, 5.0f);
+			ImGui::DragFloat3("Target", &camera.target.x, 0.0f);
+			ImGui::Checkbox("Orthographic", &camera.orthographic);
+			ImGui::DragFloat("FOV", &camera.fov, 60);
+			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1);
+			ImGui::DragFloat("Far Plane", &camera.farPlane, 100);
 			ImGui::End();
 			
 			ImGui::Render();

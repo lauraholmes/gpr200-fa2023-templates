@@ -85,8 +85,8 @@ namespace myLib {
 		float width = aspect * height;
 		float right = width / 2;
 		float top = height / 2;
-		float left = -right;
-		float bottom = -top;
+		float left = -1*right;
+		float bottom = -1*top;
 
 		return ew::Mat4(
 			2/(right-left), 0, 0, -((right+left)/(right-left)),
@@ -97,9 +97,10 @@ namespace myLib {
 	
 	};
 	inline ew::Mat4 Perspective(float fov, float aspect, float near, float far) {
+		float x = ew::Radians(fov);
 		return ew::Mat4(
-	    1 / (tan(fov/2)*aspect), 0, 0, 0,
-		0, 1 / tan(fov/2), 0, 0,
+	    1/(tan(x/2)*aspect), 0, 0, 0,
+		0, 1/(tan(x/2)), 0, 0,
 		0, 0, (far+near)/(near-far), (2*far*near)/(near-far),
 		0, 0, -1, 0
 		);
