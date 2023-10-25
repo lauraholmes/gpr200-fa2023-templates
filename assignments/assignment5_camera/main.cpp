@@ -69,9 +69,17 @@ int main() {
 		cubeTransforms[i].position.y = i / (NUM_CUBES / 2) - 0.5;
 	}
 
+	float prevTime; //Timestamp of previous frame
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-		cameraControls.moveCamera(window, &camera, &cameraControls);
+
+		//Calculate deltaTime
+		float time = (float)glfwGetTime(); //Timestamp of current frame
+		float deltaTime = time - prevTime;
+		prevTime = time;
+
+		//Pass deltaTime into moveCamera. Update this function to include a 4th parameter.
+		cameraControls.moveCamera(window, &camera, &cameraControls, deltaTime);
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		//Clear both color buffer AND depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -110,11 +118,17 @@ int main() {
 			ImGui::DragFloat3("Position", &camera.position.x, 5.0f);
 			ImGui::DragFloat3("Target", &camera.target.x, 0.0f);
 			ImGui::Checkbox("Orthographic", &camera.orthographic);
-			ImGui::DragFloat("FOV", &camera.fov, 60.0f);
+			ImGui::SliderFloat("FOV", &camera.fov, 0, 180, "%f", 0);
 			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1f);
 			ImGui::DragFloat("Far Plane", &camera.farPlane, 100.0f);
 			ImGui::Text("Camera Controller");
-			ImGui::
+			ImGui::Value("Yaw", &cameraControls.yaw);
+			ImGui::Value("Pitch", &cameraControls.pitch);
+			ImGui::DragFloat("Move Speed", &cameraControls.moveSpeed, 5.0f);
+			ImGui::Button("Reset");
+			if (ImGui::Button("Reset")) {
+				
+			}
 			ImGui::End();
 			
 			ImGui::Render();
