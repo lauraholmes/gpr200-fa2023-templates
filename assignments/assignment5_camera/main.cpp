@@ -22,6 +22,7 @@ const int SCREEN_HEIGHT = 720;
 const int NUM_CUBES = 4;
 myLib::Transform cubeTransforms[NUM_CUBES];
 myLib::Camera camera;
+myLib::CameraControls cameraControls;
 
 int main() {
 	printf("Initializing...");
@@ -70,6 +71,7 @@ int main() {
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+		cameraControls.moveCamera(window, &camera, &cameraControls);
 		glClearColor(0.3f, 0.4f, 0.9f, 1.0f);
 		//Clear both color buffer AND depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
