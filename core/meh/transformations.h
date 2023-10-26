@@ -65,14 +65,14 @@ namespace myLib {
 		ew::Vec3 camUp = ew::Cross(camDirection, right);
 
 		ew::Mat4 m1;
-		m1 = (
+		m1 = ew::Mat4(
 		right.x, right.y, right.z, 0,
 		camUp.x, camUp.y, camUp.z, 0,
 		camDirection.x, camDirection.y, camDirection.z, 0,
 		0, 0, 0, 1
 		);
 		ew::Mat4 m2;
-		m2 = (
+		m2 = ew::Mat4(
 		1, 0, 0, -eye.x,
 		0, 1, 0, -eye.y,
 		0, 0, 1, -eye.z,

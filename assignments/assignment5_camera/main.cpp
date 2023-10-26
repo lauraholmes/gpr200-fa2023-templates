@@ -69,6 +69,8 @@ int main() {
 		cubeTransforms[i].position.y = i / (NUM_CUBES / 2) - 0.5;
 	}
 
+	camera.aspectRatio = (float)SCREEN_WIDTH / SCREEN_HEIGHT;
+
 	float prevTime{}; //Timestamp of previous frame
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -122,10 +124,9 @@ int main() {
 			ImGui::DragFloat("Near Plane", &camera.nearPlane, 0.1f);
 			ImGui::DragFloat("Far Plane", &camera.farPlane, 100.0f);
 			ImGui::Text("Camera Controller");
-			ImGui::Text("Yaw: %f", &cameraControls.yaw, 0.0f);
-			ImGui::Text("Pitch: %f", &cameraControls.pitch, 0.0f);
+			ImGui::Text("Yaw: %f", cameraControls.yaw, 0.0f);
+			ImGui::Text("Pitch: %f", cameraControls.pitch, 0.0f);
 			ImGui::DragFloat("Move Speed", &cameraControls.moveSpeed, 5.0f);
-			ImGui::Button("Reset");
 			if (ImGui::Button("Reset")) {
 				camera.position = ew::Vec3(0.0f, 0.0f, 5.0f);
 				camera.target = ew::Vec3(0.0f, 0.0f, 0.0f);
@@ -133,7 +134,7 @@ int main() {
 				camera.nearPlane = 0.1f;
 				camera.farPlane = 100.0f;
 				camera.orthoSize = 6.0f;
-				cameraControls.yaw = 0;
+				cameraControls.yaw = -90;
 				cameraControls.pitch = 0;
 				cameraControls.moveSpeed = 5.0f;
 			}

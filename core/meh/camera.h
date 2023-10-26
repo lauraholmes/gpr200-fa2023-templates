@@ -30,11 +30,11 @@ namespace myLib {
 
 	struct CameraControls {
 		double prevMouseX, prevMouseY; //Mouse position from previous frame
-		float yaw = 0, pitch = 0; //Degrees
+		float yaw =-90, pitch = 0; //Degrees
 		float mouseSensitivity = 0.1f; //How fast to turn with mouse
 		bool firstMouse = true; //Flag to store initial mouse position
 		float moveSpeed = 5.0f; //How fast to move with arrow keys (M/S)
-		void moveCamera(GLFWwindow* window, Camera* camera, CameraControls* controls, float time) {
+		void moveCamera(GLFWwindow* window, Camera* camera, CameraControls* controls, float dTime) {
 			//If right mouse is not held, release cursor and return early.
 			if (!glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2)) {
 				//Release cursor
@@ -65,7 +65,7 @@ namespace myLib {
 			
 			//TODO: Add to yaw and pitch
 			controls->yaw += xOffSet;
-			controls->pitch += yOffSet;
+			controls->pitch -= yOffSet;
 			
 			//TODO: Clamp pitch between -89 and 89 degrees
 
@@ -95,22 +95,22 @@ namespace myLib {
 				//EXAMPLE: Moving along forward axis if W is held.
 				//Note that this is framerate dependent, and will be very fast until you scale by deltaTime. See the next section.
 			if (glfwGetKey(window, GLFW_KEY_W)) { //forward
-				camera->position += forward * controls->moveSpeed * time;
+				camera->position += forward * controls->moveSpeed * dTime;
 			}
 			if (glfwGetKey(window, GLFW_KEY_D)) { //right
-				camera->position += right * controls->moveSpeed*time;
+				camera->position += right * controls->moveSpeed*dTime;
 			}
 			if (glfwGetKey(window, GLFW_KEY_A)) { //left
-				camera->position += -(right) * controls->moveSpeed*time;
+				camera->position += -(right) * controls->moveSpeed*dTime;
 			}
 			if (glfwGetKey(window, GLFW_KEY_S)) { //backwards
-				camera->position += -(forward)*controls->moveSpeed*time;
+				camera->position += -(forward)*controls->moveSpeed*dTime;
 			}
-			if (glfwGetKey(window, GLFW_KEY_Q)) { //up
-				camera->position += up*controls->moveSpeed*time;
+			if (glfwGetKey(window, GLFW_KEY_E)) { //up
+				camera->position += up*controls->moveSpeed*dTime;
 			}
-			if (glfwGetKey(window, GLFW_KEY_E)) { //down
-				camera->position += -(up)*controls->moveSpeed*time;
+			if (glfwGetKey(window, GLFW_KEY_Q)) { //down
+				camera->position += -(up)*controls->moveSpeed*dTime;
 			}
 
 			//Setting camera.target should be done after changing position. Otherwise, it will use camera.position from the previous frame and lag behind
