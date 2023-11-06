@@ -16,6 +16,12 @@ namespace yourLib {
 	}
 	ew::MeshData createPlane(float width, float height, int subdivisions)
 	{
-		
+		float rows = 
+		float columns = subdivisions * rows;
+
+
+		for ()
+
+
 	}
 }
