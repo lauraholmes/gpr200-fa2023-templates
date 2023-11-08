@@ -1,5 +1,6 @@
 #pragma once
 #include "../ew/mesh.h"
+#include "../ew/ewMath/ewMath.h"
 
 
 namespace myLib {
