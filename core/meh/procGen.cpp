@@ -3,7 +3,7 @@
 #include "../ew/ewMath/ewMath.h"
 #include <stdlib.h>
 
-namespace yourLib {
+namespace myLib {
 	ew::MeshData createSphere(float radius, int numSegments)
 	{
 		ew::MeshData mesh;
@@ -37,6 +37,11 @@ namespace yourLib {
 				mesh.indices.push_back(start);
 				mesh.indices.push_back(start + 1);
 				mesh.indices.push_back(start + columns);
+
+				mesh.indices.push_back(start + columns);
+				mesh.indices.push_back(start + 1);
+				mesh.indices.push_back(start + columns + 1);
+				
 			}
 		}
 		return mesh;
@@ -73,12 +78,18 @@ namespace yourLib {
 		mesh.vertices.push_back(botVert);
 
 		float start = 0;
-		float center = numSegments;
+		float center = 1;
 
 		for (int i = 0; i <= numSegments; i++) {
 			mesh.indices.push_back(start + i);
 			mesh.indices.push_back(center);
 			mesh.indices.push_back(start + i + 1);
+		}
+
+		for (int i = 0; i <= numSegments; i++) {
+			mesh.indices.push_back(start - i);
+			mesh.indices.push_back(center);
+			mesh.indices.push_back(start - i - 1);
 		}
 
 		float sideStart = 0;
@@ -89,9 +100,10 @@ namespace yourLib {
 			mesh.indices.push_back(start + 1);
 			mesh.indices.push_back(start + columns);
 
+			mesh.indices.push_back(start + columns);
 			mesh.indices.push_back(start + 1);
 			mesh.indices.push_back(start + columns + 1);
-			mesh.indices.push_back(start + columns);
+			
 		}
 		return mesh;
 	}
@@ -106,10 +118,11 @@ namespace yourLib {
 				float z = -height * (row / subdivisions);
 
 				vertex.pos = ew::Vec3(x, 0, z);
+				vertex.normal = ew::Vec3(x,0,z);
+				vertex.uv = ew::Vec2(column, row);
 				mesh.vertices.push_back(vertex);
 			}
 		}
-
 
 		float columns = subdivisions + 1;
 		for (float row = 0; row < subdivisions; row++) {
@@ -119,12 +132,13 @@ namespace yourLib {
 				mesh.indices.push_back(start);
 				mesh.indices.push_back(start + 1);
 				mesh.indices.push_back(start + columns + 1);
-
-				mesh.indices.push_back(start);
-				mesh.indices.push_back(start + columns);
 				mesh.indices.push_back(start + columns + 1);
+				mesh.indices.push_back(start + columns);
+				mesh.indices.push_back(start);
 			}
 		}
+
+
 		return mesh;
 	}
 }

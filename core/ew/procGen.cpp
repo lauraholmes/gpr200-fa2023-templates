@@ -3,7 +3,7 @@
 */
 
 
-#include "procGen.h"
+#include "../ew/procGen.h"
 #include <stdlib.h>
 
 namespace ew {
