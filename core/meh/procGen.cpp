@@ -20,6 +20,8 @@ namespace myLib {
 				float z = radius * sin(theta) * sin(phi);
 
 				vertex.pos = ew::Vec3(x, y, z);
+				vertex.normal = ew::Vec3(x, y, z);
+				vertex.uv = ew::Vec2(column, row);
 				mesh.vertices.push_back(vertex);
 			}
 		}
@@ -31,7 +33,7 @@ namespace myLib {
 			mesh.indices.push_back(sideStart + i + 1);
 		}
 		float columns = numSegments + 1;
-		for (int row = 1; row < numSegments - 1; row++) {
+		for (int row = 1; row <= numSegments - 1; row++) {
 			for (int column = 0; column < numSegments; column++) {
 				float start = row * columns + column;
 				mesh.indices.push_back(start);
@@ -41,7 +43,6 @@ namespace myLib {
 				mesh.indices.push_back(start + columns);
 				mesh.indices.push_back(start + 1);
 				mesh.indices.push_back(start + columns + 1);
-				
 			}
 		}
 		return mesh;
@@ -77,22 +78,20 @@ namespace myLib {
 		botVert.pos = ew::Vec3(0, botY, 0);
 		mesh.vertices.push_back(botVert);
 
-		float start = 0;
-		float center = 1;
+		float start = mesh.vertices.size()+1;
+		float center = mesh.vertices.size() - 1;
 
 		for (int i = 0; i <= numSegments; i++) {
 			mesh.indices.push_back(start + i);
 			mesh.indices.push_back(center);
 			mesh.indices.push_back(start + i + 1);
-		}
 
-		for (int i = 0; i <= numSegments; i++) {
 			mesh.indices.push_back(start - i);
 			mesh.indices.push_back(center);
 			mesh.indices.push_back(start - i - 1);
 		}
-
-		float sideStart = 0;
+		
+		float sideStart = center - (numSegments + 1);
 		float columns = numSegments + 1;
 		for (int i = 0; i < columns; i++) {
 			float start = sideStart + i;
@@ -137,8 +136,6 @@ namespace myLib {
 				mesh.indices.push_back(start);
 			}
 		}
-
-
 		return mesh;
 	}
 }
