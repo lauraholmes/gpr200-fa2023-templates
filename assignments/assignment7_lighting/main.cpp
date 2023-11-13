@@ -171,4 +171,14 @@ void resetCamera(ew::Camera& camera, ew::CameraController& cameraController) {
 	cameraController.pitch = 0.0f;
 }
 
+struct Light {
+	ew::Vec3 position;
+	ew::Vec3 color;
+};
 
+struct Material {
+	float ambientK;
+	float diffuseK;
+	float specular;
+	float shininess;
+};
