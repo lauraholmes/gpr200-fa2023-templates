@@ -85,7 +85,9 @@ namespace myLib {
 			mesh.indices.push_back(start + i);
 			mesh.indices.push_back(center);
 			mesh.indices.push_back(start + i + 1);
+		}
 
+		for (int i = 0; i <= numSegments; i++) {
 			mesh.indices.push_back(start - i);
 			mesh.indices.push_back(center);
 			mesh.indices.push_back(start - i - 1);
