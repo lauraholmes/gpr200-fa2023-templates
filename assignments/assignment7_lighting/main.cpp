@@ -15,6 +15,18 @@
 #include <ew/camera.h>
 #include <ew/cameraController.h>
 
+struct Light {
+	ew::Vec3 position;
+	ew::Vec3 color;
+};
+
+struct Material {
+	float ambientK;
+	float diffuseK;
+	float specular;
+	float shininess;
+};
+
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void resetCamera(ew::Camera& camera, ew::CameraController& cameraController);
 
@@ -26,6 +38,8 @@ ew::Vec3 bgColor = ew::Vec3(0.1f);
 
 ew::Camera camera;
 ew::CameraController cameraController;
+
+Light lights[];
 
 int main() {
 	printf("Initializing...");
@@ -111,6 +125,9 @@ int main() {
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
 
+		shader.setVec3("_Lights[0].position", lights[0].position);
+		shader.setVec3("_Lights[0].color", lights[0].color);
+
 		//TODO: Render point lights
 
 		//Render UI
@@ -170,15 +187,3 @@ void resetCamera(ew::Camera& camera, ew::CameraController& cameraController) {
 	cameraController.yaw = 0.0f;
 	cameraController.pitch = 0.0f;
 }
-
-struct Light {
-	ew::Vec3 position;
-	ew::Vec3 color;
-};
-
-struct Material {
-	float ambientK;
-	float diffuseK;
-	float specular;
-	float shininess;
-};
