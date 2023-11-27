@@ -21,10 +21,10 @@ struct Light {
 };
 
 struct Material {
-	float ambientK;
-	float diffuseK;
-	float specular;
-	float shininess;
+	float ambientK = 0.2;
+	float diffuseK = 0.5;
+	float specular = 0.5;
+	float shininess = 128;
 };
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -39,7 +39,11 @@ ew::Vec3 bgColor = ew::Vec3(0.1f);
 ew::Camera camera;
 ew::CameraController cameraController;
 
-Light lights[4];
+const int MAX_LIGHTS = 4;
+
+Light lights[MAX_LIGHTS];
+
+Material material;
 
 int main() {
 	printf("Initializing...");
@@ -74,6 +78,14 @@ int main() {
 
 	ew::Shader shader("assets/defaultLit.vert", "assets/defaultLit.frag");
 	unsigned int brickTexture = ew::loadTexture("assets/brick_color.jpg",GL_REPEAT,GL_LINEAR);
+	ew::Shader unlit("assets/unlit.vert", "assets/unlit.frag");
+
+	lights[1].position = ew::Vec3(2, 5, 1);
+	lights[2].position = ew::Vec3(-2, 5, 1);
+	lights[3].position = ew::Vec3(2, 5, -1);
+	lights[0].position = ew::Vec3(-2, 5, -1);
+
+	int numLights = 1;
 
 	//Create cube
 	ew::Mesh cubeMesh(ew::createCube(1.0f));
@@ -126,11 +138,27 @@ int main() {
 		cylinderMesh.draw();
 
 		shader.setVec3("_cameraPos", camera.position);
+		shader.setInt("_numLights", numLights);
 
-		shader.setVec3("_Lights[0].position", lights[0].position);
-		shader.setVec3("_Lights[0].color", lights[0].color);
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			shader.setVec3("_Lights[" + std::to_string(i) + "].position", lights[i].position);
+			shader.setVec3("_Lights[" + std::to_string(i) + "].color", lights[i].color);
+		}
+
+		shader.setFloat("_material.ambientK", material.ambientK);
+		shader.setFloat("_material.diffuseK", material.diffuseK);
+		shader.setFloat("_material.specular", material.specular);
+		shader.setFloat("_material.shininess", material.shininess);
 
 		//TODO: Render point lights
+		unlit.use();
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			unlit.setMat4("_ViewProjection", camera.ProjectionMatrix() * camera.ViewMatrix());
+			unlit.setMat4("_Model", ew::Translate(lights[i].position) * ew::Scale(0.1));
+			unlit.setVec3("_Color", lights[i].color);
+
+			sphereMesh.draw();
+		}
 
 		//Render UI
 		{
@@ -157,6 +185,19 @@ int main() {
 					resetCamera(camera, cameraController);
 				}
 			}
+			if (ImGui::CollapsingHeader("Lighting")) {
+				ImGui::DragInt("Number of Lights", &numLights);
+				ImGui::DragFloat3("Light 1 Position", &lights[0].position.x, 0.1f);
+				ImGui::DragFloat3("Light 2 Position", &lights[1].position.x, 0.1f);
+				ImGui::DragFloat3("Light 3 Position", &lights[2].position.x, 0.1f);
+				ImGui::DragFloat3("Light 4 Position", &lights[3].position.x, 0.1f);
+
+				ImGui::ColorEdit3("Light 1 Color", &lights[0].color.x);
+				ImGui::ColorEdit3("Light 2 Color", &lights[1].color.x);
+				ImGui::ColorEdit3("Light 3 Color", &lights[2].color.x);
+				ImGui::ColorEdit3("Light 4 Color", &lights[3].color.x);
+			}
+
 
 			ImGui::ColorEdit3("BG color", &bgColor.x);
 			ImGui::End();
