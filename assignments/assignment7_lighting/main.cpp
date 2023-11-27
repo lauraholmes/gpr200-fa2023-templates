@@ -16,8 +16,8 @@
 #include <ew/cameraController.h>
 
 struct Light {
-	ew::Vec3 position;
-	ew::Vec3 color;
+	ew::Vec3 position = ew::Vec3(0, 5, 0);
+	ew::Vec3 color = ew::Vec3(1,1,1);
 };
 
 struct Material {
@@ -39,7 +39,7 @@ ew::Vec3 bgColor = ew::Vec3(0.1f);
 ew::Camera camera;
 ew::CameraController cameraController;
 
-Light lights[];
+Light lights[4];
 
 int main() {
 	printf("Initializing...");
@@ -124,6 +124,8 @@ int main() {
 
 		shader.setMat4("_Model", cylinderTransform.getModelMatrix());
 		cylinderMesh.draw();
+
+		shader.setVec3("_cameraPos", camera.position);
 
 		shader.setVec3("_Lights[0].position", lights[0].position);
 		shader.setVec3("_Lights[0].color", lights[0].color);
